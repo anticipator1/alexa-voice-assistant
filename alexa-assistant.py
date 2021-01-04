@@ -1,9 +1,14 @@
+from asyncio import sleep
+
 import speech_recognition as sr
 import pyttsx3
 import pywhatkit
 import datetime
 import wikipedia
 import pyjokes
+import requests
+import pyowm  #weather api module
+
 
 
 listener=sr.Recognizer()
@@ -35,7 +40,7 @@ def take_command():
     return command
 
 def run_alexa():
-
+    global command
     command=take_command()
 
     print(command)
@@ -58,8 +63,29 @@ def run_alexa():
     elif 'joke' in command:
             talk(pyjokes.get_joke())
 
+
+    elif 'weather' in command:
+            owm = pyowm.OWM('3e03394af566ef5d3eb79310a011b994')
+
+            city = 'kathmandu'
+
+            loc = owm.weather_manager().weather_at_place(city)
+
+            weather = loc.weather
+
+            temp = weather.temperature(unit='celsius')
+            status = weather.detailed_status
+
+            cleaned_temp_data = (int(temp['temp']))
+
+            talk('the temperature in'+ city+ 'is' + str(cleaned_temp_data) + 'degree celsius')
+            talk('the day today will have'+status )
+            # base_url = "http://api.openweathermap.org/data/2.5/weather?"
+        #talk('what is your city name')
+
     else:
-            talk('please say the command again ')
+            talk('please say it again')
+
 
 
 
